@@ -10,15 +10,6 @@ pipeline {
                 }
             }
         }
-        stage('Deploy our image') {
-            steps {
-                script {
-                    // Assume the Docker Hub registry by passing an empty string as the first parameter
-                    docker.withRegistry('https://registry.example.com' , 'credentials-id') {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }
+      
     }
 }
