@@ -22,6 +22,7 @@ pipeline {
                     docker.withRegistry('' , 'dockerhub') {
                         dockerImage.push()
                     }
+                   }
                 }
             }
         }
