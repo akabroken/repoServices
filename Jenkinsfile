@@ -10,21 +10,30 @@ pipeline {
                 }
             }
         }
-      
-    
     stage('Deploy our image') {
-            steps {
-                script {
-                    // Assume the Docker Hub registry by passing an empty string as the first parameter
-                   //   withCredentials([usernamePassword( credentialsId: 'dockerhub', usernameVariable: 'amahas123', passwordVariable: 'Cuchaza@ken123')]) {
-                     def registry_url = "registry.hub.docker.com/"
-                   // bat "docker login -u $USER -p $PASSWORD ${registry_url}"
-                    docker.withRegistry("http://${registry_url}" , 'dockerhub') {
-                        dockerImage.push()
-                    }
-                   //}
-                }
+        environment {
+                registryDomain = "hub.docker.com"
+                registry = "https://${registryDomain}"
+                registryCredential = 'dockerhub'
+                PATH = "${dockerHome}/bin:${env.PATH}"
+                repo = "test"
+                project = "reposervices"
+                version = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                fullName = "${registryDomain}/${repo}/${project}"
             }
+            steps {
+                container('docker') {
+          script{
+            def defaultLatestImage = docker.build("${fullName}", ".")
+            def taggedImage = docker.build("${fullName}:${version}", ".")
+            docker.withRegistry(registry, registryCredential) {
+              defaultLatestImage.push()
+              taggedImage.push()
+            }
+          }
         }
+      }
+           
+                
     }
 }
