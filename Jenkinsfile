@@ -1,7 +1,7 @@
 pipeline {
     agent {
         node {
-          label 'maven-docker-worker'
+          label 'maven'
       }
     }
     stages {
