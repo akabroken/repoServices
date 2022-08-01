@@ -5,13 +5,13 @@ pipeline {
       
     }
     stages {
-		stage('Package') {
-		  steps {
-			container('maven') {
-			  sh 'mvn package'
-			}
-		  }
-		}
+// 		stage('Package') {
+// 		  steps {
+// 			container('maven') {
+// 			  sh 'mvn package'
+// 			}
+// 		  }
+// 		}
         stage('Building our image') {
             steps {
                 script {
