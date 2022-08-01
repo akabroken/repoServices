@@ -16,6 +16,9 @@ pipeline {
             steps {
                 script {
                     // Assume the Docker Hub registry by passing an empty string as the first parameter
+                      withCredentials([usernamePassword( credentialsId: 'docker-hub-credentials', usernameVariable: 'amahas123', passwordVariable: 'Cuchaza@ken123')]) {
+                     def registry_url = "registry.hub.docker.com/"
+                    bat "docker login -u $USER -p $PASSWORD ${registry_url}"
                     docker.withRegistry('' , 'dockerhub') {
                         dockerImage.push()
                     }
