@@ -1,22 +1,24 @@
 pipeline {
-    agent any
-
+    agent {
+        label 'docker'
+    }
     stages {
-        stage('Build') {
+        stage('Building our image') {
             steps {
-                echo 'Build Application'
+                script {
+                    dockerImage = docker.build "rootest/petclinic:$BUILD_NUMBER"
+                }
             }
         }
-		stage('Test') {
+        stage('Deploy our image') {
             steps {
-                echo 'Test Application'
-            }
-        }
-		stage('Deploy') {
-            steps {
-                echo 'Deploy Application'
+                script {
+                    // Assume the Docker Hub registry by passing an empty string as the first parameter
+                    docker.withRegistry('' , 'dockerhub') {
+                        dockerImage.push()
+                    }
+                }
             }
         }
     }
-    
 }
