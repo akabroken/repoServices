@@ -14,7 +14,7 @@ pipeline {
             steps {
                 script {
                     // Assume the Docker Hub registry by passing an empty string as the first parameter
-                    docker.withRegistry('https://hub.docker.com/' , 'dockerhub') {
+                    docker.withRegistry('https://registry.hub.docker.com/' , 'dockerhub') {
                         dockerImage.push()
                     }
                 }
