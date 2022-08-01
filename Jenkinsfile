@@ -1,8 +1,17 @@
 pipeline {
     agent {
-        label 'docker'
+        node {
+          label 'maven-docker-worker'
+      }
     }
     stages {
+		stage('Package') {
+		  steps {
+			container('maven') {
+			  sh 'mvn package'
+			}
+		  }
+		}
         stage('Building our image') {
             steps {
                 script {
@@ -10,7 +19,7 @@ pipeline {
                 }
             }
         }
-    stage('Deploy our image') {
+    stage('Deploy') {
         environment {
                 registryDomain = "hub.docker.com"
                 registry = "https://${registryDomain}"
@@ -32,8 +41,7 @@ pipeline {
             }
           }
         }
-      }
-           
-                
+      }            
     }
+	}
 }
