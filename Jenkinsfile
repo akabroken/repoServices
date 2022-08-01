@@ -31,7 +31,7 @@ pipeline {
                 fullName = "${registryDomain}/${repo}/${project}"
             }
             steps {
-                container('docker') {
+              //  container('docker') {
           script{
             def defaultLatestImage = docker.build("${fullName}", ".")
             def taggedImage = docker.build("${fullName}:${version}", ".")
@@ -39,7 +39,7 @@ pipeline {
               defaultLatestImage.push()
               taggedImage.push()
             }
-          }
+         // }
         }
       }            
     }
