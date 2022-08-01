@@ -1,8 +1,8 @@
 pipeline {
     agent {
-        node {
-          label 'maven'
-      }
+        
+          label 'docker'
+      
     }
     stages {
 		stage('Package') {
