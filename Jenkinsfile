@@ -1,53 +1,41 @@
-
+def artifact
 pipeline {
-  agent {
-      node {
-          label 'maven-docker-worker'
-      }
-  }
-  stages {
-    stage('Package') {
-      steps {
-        container('maven') {
-          sh 'mvn package'
-        }
-      }
+    agent {
+        label 'docker'
     }
-    stage('Static Analysis') {
-      environment {
-        scannerHome = tool 'SonarQube'
-      }
-      steps {
-        container('sonar-scanner') {
-          withSonarQubeEnv('SonarQube') {
-            sh "${scannerHome}/bin/sonar-scanner"
-          }
-        }
-      }
+    // configure environmental variables
+    environment {
+	registry = "https://registry.hub.docker.com"
+	registryCredentials = "dockerhub"
     }
-    stage('Deploy') {
-      environment {
-        registryDomain = "docker.interswitch.co.ke:30003"
-        registry = "https://${registryDomain}"
-        registryCredential = 'docker-credentials'
-        PATH = "${dockerHome}/bin:${env.PATH}"
-        repo = "test"
-        project = "repoServices"
-        version = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-        fullName = "${registryDomain}/${repo}/${project}"
-      }
-      steps {
-        container('docker') {
-          script{
-            def defaultLatestImage = docker.build("${fullName}", ".")
-            def taggedImage = docker.build("${fullName}:${version}", ".")
-            docker.withRegistry(registry, registryCredential) {
-              defaultLatestImage.push()
-              taggedImage.push()
+    
+    // instruct jenkins to allocate executor and workspace for entire pipeline agent any
+    
+    stages {
+    	// compile and generate single executable jar with all dependencies
+	stage('Build') {
+            steps {
+                bat 'mvn install'
             }
-          }
         }
-      }
+        
+        // build docker image of an application
+	stage('Package') {
+            steps {
+                script {
+                    artifact = docker.build("amahas123/reposervices:$BUILD_NUMBER")
+                }
+            }
+        }
+        // push built docker image to docker hub
+	stage('Publish') {
+            steps {				
+                script {
+                    docker.withRegistry(registry, registryCredentials) {
+      			artifact.push()
+                    }
+                }
+            }
+        }
     }
-  }
 }

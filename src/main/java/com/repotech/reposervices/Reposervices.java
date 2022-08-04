@@ -16,7 +16,7 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 @SpringBootApplication(exclude = {ErrorMvcAutoConfiguration.class})
 public class Reposervices {
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
        // System.out.println("Hello World!");
        SpringApplication.run(Reposervices.class, args);
     }
